@@ -5,19 +5,21 @@
 
 > *"En la teoría, no hay diferencia entre teoría y práctica. En la práctica, sí la hay."* - Yogi Berra
 
+## **Resumen**
+
+Esta guía presenta **21 mejores prácticas** fundamentales para proyectos de machine learning exitosos, organizadas según las etapas del ciclo de vida de una solución: preparación de datos, generación del conjunto de entrenamiento, entrenamiento y evaluación de modelos, y despliegue y monitoreo. Las prácticas están diseñadas para superar los desafíos reales que no suelen abordarse en entornos académicos.
+
 ## **Introducción**
 
-¡Bienvenido a esta guía práctica de Machine Learning! 
+¡Bienvenido a esta guía práctica de Machine Learning!
 
-Después de trabajar en múltiples proyectos que cubren conceptos importantes de aprendizaje automático, técnicas y algoritmos ampliamente utilizados, ya tienes una visión general del ecosistema del aprendizaje automático, así como una experiencia sólida resolviendo problemas prácticos utilizando algoritmos de machine learning y Python. 
+La transición de ejemplos académicos a **proyectos reales** presenta desafíos significativos:
 
-Sin embargo, cuando pasamos de los ejemplos académicos a **proyectos reales**, surgen desafíos inesperados que no suelen abordarse en los cursos tradicionales:
+- Tratamiento de datos incompletos o inconsistentes
+- Modelos que funcionan en desarrollo pero fallan en producción
+- Selección óptima de algoritmos entre múltiples opciones
 
-- ¿Cómo lidiar con datos incompletos o inconsistentes?
-- ¿Qué hacer cuando el modelo funciona bien en desarrollo pero falla en producción?
-- ¿Cómo determinar qué algoritmo elegir entre tantas opciones?
-
-Esta guía tiene como objetivo prepararte para estos escenarios con **21 mejores prácticas** esenciales que debes seguir a lo largo del ciclo de vida completo de una solución de aprendizaje automático. Cada práctica viene respaldada por ejemplos concretos y código de implementación.
+Esta guía presenta prácticas esenciales para todas las etapas del ciclo de vida de un proyecto de ML, con ejemplos concretos y código práctico de implementación.
 
 ### **En esta guía cubriremos:**
 
@@ -29,13 +31,41 @@ Esta guía tiene como objetivo prepararte para estos escenarios con **21 mejores
 
 > **Nota para estudiantes:** Al final de cada sección encontrarás ejercicios prácticos y preguntas de reflexión para afianzar lo aprendido.
 
+## **Índice**
+
+1. [Flujo de trabajo de una solución de aprendizaje automático](#1-flujo-de-trabajo-de-una-solución-de-aprendizaje-automático)
+2. [Mejores prácticas en la etapa de preparación de datos](#2-mejores-prácticas-en-la-etapa-de-preparación-de-datos)
+   - [2.1. Comprender profundamente el objetivo del proyecto](#21-comprender-profundamente-el-objetivo-del-proyecto)
+   - [2.2. Recolectar todos los campos potencialmente relevantes](#22-recolectar-todos-los-campos-potencialmente-relevantes)
+   - [2.3. Estandarizar y normalizar valores consistentemente](#23-estandarizar-y-normalizar-valores-consistentemente)
+   - [2.4. Tratar estratégicamente los datos faltantes](#24-tratar-estratégicamente-los-datos-faltantes)
+   - [2.5. Implementar estrategias eficientes para datos a gran escala](#25-implementar-estrategias-eficientes-para-datos-a-gran-escala)
+3. [Mejores prácticas en la generación del conjunto de entrenamiento](#3-mejores-prácticas-en-la-generación-del-conjunto-de-entrenamiento)
+   - [3.1. Identificar correctamente variables categóricas con apariencia numérica](#31-identificar-correctamente-variables-categóricas-con-apariencia-numérica)
+   - [3.2. Aplicar la codificación adecuada para variables categóricas](#32-aplicar-la-codificación-adecuada-para-variables-categóricas)
+   - [3.3. Implementar selección de características estratégica](#33-implementar-selección-de-características-estratégica)
+   - [3.4. Aplicar reducción de dimensionalidad cuando sea beneficioso](#34-aplicar-reducción-de-dimensionalidad-cuando-sea-beneficioso)
+   - [3.5. Escalar características adecuadamente según el algoritmo](#35-escalar-características-adecuadamente-según-el-algoritmo)
+   - [3.6. Realizar ingeniería de características con conocimiento del dominio](#36-realizar-ingeniería-de-características-con-conocimiento-del-dominio)
+   - [3.7. Realizar ingeniería de características sin conocimiento del dominio](#37-realizar-ingeniería-de-características-sin-conocimiento-del-dominio)
+   - [3.8. Documentar rigurosamente la ingeniería de características](#38-documentar-rigurosamente-la-ingeniería-de-características)
+4. [Mejores prácticas en la etapa de entrenamiento, evaluación y selección del modelo](#4-mejores-prácticas-en-la-etapa-de-entrenamiento-evaluación-y-selección-del-modelo)   - [4.1. Seleccionar algoritmos iniciales estratégicamente](#41-seleccionar-algoritmos-iniciales-estratégicamente)
+   - [4.2. Entender y prevenir el sobreajuste](#42-entender-y-prevenir-el-sobreajuste)
+   - [4.3. Diagnosticar sesgo y varianza con curvas de aprendizaje](#43-diagnosticar-sesgo-y-varianza-con-curvas-de-aprendizaje)
+   - [4.4. Modelar datasets a gran escala](#44-modelar-datasets-a-gran-escala)
+5. [Mejores prácticas en la etapa de despliegue y monitoreo](#5-mejores-prácticas-en-la-etapa-de-despliegue-y-monitoreo)
+   - [5.1. Guardar, cargar y reutilizar modelos](#51-guardar-cargar-y-reutilizar-modelos)
+   - [5.2. Monitorear el rendimiento del modelo](#52-monitorear-el-rendimiento-del-modelo)
+   - [5.3. Actualizar los modelos regularmente](#53-actualizar-los-modelos-regularmente)
+6. [Resumen](#6-resumen)
+
 ---
 
 ## **1. Flujo de trabajo de una solución de aprendizaje automático**
 
 Cuando abordamos un proyecto real de Machine Learning, seguimos un flujo de trabajo estructurado que puede dividirse en cuatro grandes etapas:
 
-![Ciclo de vida ML](https://i.imgur.com/placeholder_ml_workflow.png)
+<!-- Referencia a imagen eliminada: Ciclo de vida ML -->
 
 | Etapa | Descripción | Objetivo principal |
 |-------|-------------|-------------------|
@@ -92,29 +122,28 @@ Ningún sistema de machine learning, por sofisticado que sea, puede superar las 
 #### **Consideraciones prácticas:**
 
 ```python
-# Ejemplo: Recolección completa vs. parcial para predicción bursátil
-# Enfoque limitado (solo lo que creemos necesario)
-df_limitado = api.get_stock_data(symbol='AAPL', fields=['date', 'close_price'])
+# ENFOQUE LIMITADO vs. ENFOQUE EXHAUSTIVO
+# ---------------------------------------
+# ❌ Limitado (solo lo que creemos necesario)
+df_limitado = api.get_stock_data(symbol='AAPL', 
+                               fields=['date', 'close_price'])
 
-# Enfoque exhaustivo (todos los campos disponibles)
+# ✅ Exhaustivo (todos los campos disponibles)
 df_completo = api.get_stock_data(symbol='AAPL', 
-                                fields=['date', 'open', 'high', 'low', 
-                                       'close', 'volume', 'adj_close',
-                                       'dividends', 'splits', 'market_cap'])
-
-# El análisis posterior podría revelar que 'volume' es un predictor clave,
-# algo que habríamos perdido con el enfoque limitado
+                               fields=['date', 'open', 'high', 'low', 
+                                     'close', 'volume', 'adj_close',
+                                     'dividends', 'splits', 'market_cap'])
 ```
 
-> **Nota:** En el caso de web scraping o extracción de datos de fuentes volátiles, es particularmente importante guardar todos los datos posibles, ya que es posible que no puedas volver a acceder a la fuente original.
+> **💡 Nota:** En web scraping o fuentes volátiles, guarda todos los datos posibles.
 
 #### **Costo-beneficio de la recolección exhaustiva:**
 
-| Ventajas | Desventajas | Estrategia de mitigación |
+| ✅ Ventajas | ⚠️ Desventajas | 🛠️ Estrategia de mitigación |
 |----------|-------------|--------------------------|
-| No perder variables predictivas importantes | Mayor costo de almacenamiento | Comprimir datos o usar formatos eficientes (Parquet, HDF5) |
-| Habilitar análisis exploratorio más completo | Procesamiento inicial más lento | Muestrear para análisis exploratorio inicial |
-| Poder responder nuevas preguntas en el futuro | Potencial sobrecarga de información | Documentar bien todos los campos para facilitar su uso |
+| **No perder variables predictivas importantes** | Mayor costo de almacenamiento | Usar formatos eficientes (Parquet, HDF5) |
+| **Análisis exploratorio más completo** | Procesamiento inicial más lento | Muestrear para análisis inicial |
+| **Responder nuevas preguntas futuras** | Potencial sobrecarga de información | Documentar bien todos los campos |
 
 ---
 
@@ -239,7 +268,7 @@ print("\nImputación con KNN:\n", pd.DataFrame(data_imputada_knn, columns=df.col
 
 #### **Estrategias de escalado principales:**
 
-![Comparación escalado vertical vs horizontal](https://i.imgur.com/placeholder_scaling.png)
+<!-- Referencia a imagen eliminada: Comparación escalado vertical vs horizontal -->
 
 | Estrategia | Descripción | Casos de uso ideales |
 |------------|-------------|----------------------|
@@ -305,8 +334,6 @@ Las tareas en esta fase se pueden agrupar en dos categorías principales:
 1. **Preprocesamiento de datos:** transformaciones necesarias para que los algoritmos puedan operar correctamente
 2. **Ingeniería de características (feature engineering):** creación de variables predictivas a partir de los datos crudos
 
-![Flujo de ingeniería de características](https://i.imgur.com/placeholder_feature_eng.png)
-
 Analicemos las mejores prácticas para esta etapa crucial:
 
 ### **3.1. Identificar correctamente variables categóricas con apariencia numérica**
@@ -319,113 +346,87 @@ Analicemos las mejores prácticas para esta etapa crucial:
 
 | Característica | Variable numérica | Variable categórica |
 |----------------|-------------------|---------------------|
-| **Operaciones matemáticas** | Tienen sentido (ej: edad+2) | No tienen sentido (ej: mes+2) |
-| **Cardinalidad** | Generalmente alta | Generalmente limitada |
+| **Operaciones matemáticas** | ✅ Tienen sentido (edad+2) | ❌ No tienen sentido (mes+2) |
+| **Cardinalidad** | Generalmente alta | Generalmente limitada (<50) |
 | **Valor semántico** | Magnitud importante | Solo la categoría importa |
-| **Ejemplos** | Edad, ingresos, altura | Códigos postales, meses, IDs |
+| **Ejemplos comunes** | Edad, ingresos, altura | Códigos postales, meses, IDs |
 
-#### **Casos comúnmente confusos:**
-
-```
-• Valores 0/1: ¿Son binarios (numéricos) o dos categorías?
-• Rangos 1-5: ¿Son calificaciones ordinales o valores continuos?
-• Años: ¿Importa su valor numérico o son categorías temporales?
-• Códigos numéricos: ¿El orden o magnitud tiene sentido?
-```
+#### **Casos para verificar cuidadosamente:**
+- **Valores 0/1:** ¿Son binarios (numéricos) o dos categorías?
+- **Escalas 1-5:** ¿Son calificaciones ordinales o valores continuos?
+- **Años:** ¿Importa su valor numérico o son categorías temporales?
+- **Códigos numéricos:** ¿El orden tiene algún significado?
 
 #### **Ejemplo de diagnóstico en Python:**
 
 ```python
+# Función para diagnosticar tipo de variable
 def diagnosticar_variable(serie):
-    """Analiza una variable y sugiere su posible tipo"""
     n_valores_unicos = serie.nunique()
-    
-    # Verificar proporciones y patrones
-    proporcion_valores_unicos = n_valores_unicos / len(serie)
-    tiene_valores_fraccionales = (serie % 1 != 0).any()
+    proporcion = n_valores_unicos / len(serie)
+    tiene_fracciones = (serie % 1 != 0).any()
     rango = serie.max() - serie.min()
     
-    print(f"Valores únicos: {n_valores_unicos} ({proporcion_valores_unicos:.2%} del total)")
-    print(f"Tiene valores fraccionales: {tiene_valores_fraccionales}")
-    print(f"Rango: {rango}")
+    # Resumen para análisis
+    print(f"Valores únicos: {n_valores_unicos} ({proporcion:.2%} del total)")
+    print(f"Valores fraccionarios: {tiene_fracciones}, Rango: {rango}")
     
-    # Sugerencia basada en heurísticas
-    if n_valores_unicos <= 20:
-        if rango < 10 and not tiene_valores_fraccionales:
-            return "Probablemente categórica"
+    # Heurística simple pero efectiva
+    if n_valores_unicos <= 20 and rango < 10 and not tiene_fracciones:
+        return "✓ Probablemente categórica"
     
-    return "Probablemente numérica"
+    return "✓ Probablemente numérica"
 ```
 
-> **Consejo práctico:** Cuando tengas dudas, prueba modelos con ambos enfoques (tratando la variable como categórica y como numérica) y compara resultados.
+> **💡 Consejo:** Cuando tengas dudas, prueba un modelo con ambos enfoques (variable como categórica y como numérica) y compara resultados.
 
 ---
 
 ### **3.2. Aplicar la codificación adecuada para variables categóricas**
 
-**Problema:** Diferentes algoritmos tienen distintos requisitos para procesar variables categóricas, y una codificación incorrecta puede degradar el rendimiento.
+**Problema:** Diferentes algoritmos tienen requisitos específicos para variables categóricas, y una codificación incorrecta degradará el rendimiento.
 
-**Solución:** Seleccionar la técnica de codificación según el algoritmo y las características específicas de los datos.
+**Solución:** Seleccionar la técnica de codificación según el algoritmo y las características de los datos.
 
-#### **Técnicas de codificación principales:**
+#### **Guía de técnicas de codificación:**
 
 | Técnica | Descripción | Mejor para | Limitaciones |
 |---------|-------------|------------|--------------|
-| **Label Encoding** | Asigna un número entero a cada categoría | • Árboles de decisión<br>• Algoritmos que pueden manejar relaciones ordinales | Introduce orden artificial entre categorías |
-| **One-Hot Encoding** | Crea una columna binaria por cada categoría | • Regresión<br>• SVM<br>• Redes neuronales | Aumenta dimensionalidad con muchas categorías |
-| **Binary Encoding** | Convierte cada valor a representación binaria | Categorías de alta cardinalidad | Menos interpretable |
-| **Target Encoding** | Reemplaza categoría por la media de la variable objetivo | Variables categóricas predictivas con alta cardinalidad | Riesgo de sobreajuste |
-| **Embedding** | Aprende representaciones vectoriales densas | Redes neuronales con muchas categorías | Requiere más datos y complejidad |
+| **Label Encoding** | Números enteros secuenciales | ✅ Árboles de decisión | ⚠️ Introduce orden artificial |
+| **One-Hot Encoding** | Una columna binaria por categoría | ✅ Regresión, SVM, Redes neuronales | ⚠️ Explota con alta cardinalidad |
+| **Binary Encoding** | Representación binaria | ✅ Alta cardinalidad | ⚠️ Menos interpretable |
+| **Target Encoding** | Reemplaza por media del target | ✅ Variables predictivas | ⚠️ Riesgo de sobreajuste |
+| **Embedding** | Representaciones vectoriales densas | ✅ Redes neuronales avanzadas | ⚠️ Requiere más datos |
 
-#### **Ejemplo práctico de implementación:**
+#### **Ejemplo simplificado:**
 
 ```python
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
 import category_encoders as ce
 
 # Datos de ejemplo
-data = {
-    'color': ['rojo', 'azul', 'verde', 'rojo', 'verde'],
-    'talla': ['S', 'M', 'L', 'XL', 'M'],
-    'precio': [100, 120, 150, 180, 130]
-}
+data = {'color': ['rojo', 'azul', 'verde', 'rojo', 'verde']}
 df = pd.DataFrame(data)
 
-# 1. Label Encoding - para algoritmos basados en árboles
-label_encoder = LabelEncoder()
-df['color_label'] = label_encoder.fit_transform(df['color'])
-print("Label Encoding:\n", df[['color', 'color_label']])
+# TÉCNICAS DE CODIFICACIÓN
+# ------------------------
+# 1. Label Encoding (para árboles)
+df['color_label'] = LabelEncoder().fit_transform(df['color'])
 
-# 2. One-Hot Encoding - para la mayoría de algoritmos
-# Usando pandas (método simple)
-color_dummies = pd.get_dummies(df['color'], prefix='color')
-df_onehot = pd.concat([df, color_dummies], axis=1)
-print("\nOne-Hot Encoding:\n", df_onehot)
+# 2. One-Hot Encoding (para regresión, SVM)
+df_onehot = pd.concat([df, pd.get_dummies(df['color'], prefix='color')], axis=1)
 
-# 3. Binary Encoding - eficiente para alta cardinalidad
-binary_encoder = ce.BinaryEncoder(cols=['talla'])
-df_binary = binary_encoder.fit_transform(df)
-print("\nBinary Encoding:\n", df_binary)
-
-# 4. Target Encoding - útil para categorías predictivas
-target_encoder = ce.TargetEncoder(cols=['color'])
-df_target = target_encoder.fit_transform(df['color'], df['precio'])
-print("\nTarget Encoding:\n", df_target)
+# 3. Target Encoding (para alta cardinalidad)
+y = [100, 120, 150, 180, 130]  # Variable objetivo ejemplo
+df['color_target'] = ce.TargetEncoder(cols=['color']).fit_transform(df['color'], y)
 ```
 
-#### **Consideraciones avanzadas:**
+#### **Decisiones clave:**
 
-- **Alta cardinalidad:** Para variables con muchas categorías (>50), considerar:
-  - Agrupación de categorías poco frecuentes
-  - Encoders jerárquicos
-  - Técnicas de hashing
-
-- **Nuevas categorías:** En producción pueden aparecer categorías nunca vistas:
-  - Usar `handle_unknown='ignore'` en OneHotEncoder
-  - Implementar estrategias de fallback
-
-> **Ejercicio práctico:** Toma un dataset con variables categóricas y compara el rendimiento de diferentes técnicas de codificación con el mismo algoritmo.
+- **Para alta cardinalidad (>50 categorías):** Usar agrupación de categorías poco frecuentes o encoders jerárquicos
+- **Para nuevas categorías en producción:** Configurar `handle_unknown='ignore'` en OneHotEncoder
+- **Para variables ordinales:** Considerar codificación ordinal personalizada
 
 ---
 
@@ -437,339 +438,161 @@ print("\nTarget Encoding:\n", df_target)
 
 #### **Métodos principales de selección:**
 
-![Métodos de selección de características](https://i.imgur.com/placeholder_feature_selection.png)
-
 | Método | Descripción | Ventajas | Limitaciones |
 |--------|-------------|----------|--------------|
 | **Filtro** | Evalúa características independientemente del modelo | • Rápido<br>• Simple<br>• Escalable | No considera interacciones entre variables |
 | **Wrapper** | Evalúa subconjuntos usando el modelo | • Considera interacciones<br>• Específico para cada algoritmo | Computacionalmente costoso |
 | **Embebido** | La selección ocurre durante el entrenamiento | • Balance entre filtro y wrapper<br>• Eficiente | Específico para ciertos algoritmos |
 
-#### **Técnicas específicas con ejemplos de implementación:**
+#### **Técnicas con implementación simplificada:**
 
 ```python
-import pandas as pd
 import numpy as np
 from sklearn.datasets import load_digits
 from sklearn.feature_selection import SelectKBest, f_classif, RFE
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import Lasso
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 
-# Cargar dataset de ejemplo (dígitos escritos a mano)
+# Cargar dataset de ejemplo
 X, y = load_digits(return_X_y=True)
-print(f"Dimensiones originales: {X.shape}")
+print(f"Dimensiones originales: {X.shape}")  # (1797, 64)
 
-# 1. MÉTODO DE FILTRO: Selección univariada (ANOVA F-value)
-selector_filtro = SelectKBest(f_classif, k=25)  # Seleccionar 25 mejores características
-X_filtro = selector_filtro.fit_transform(X, y)
-print(f"Después de filtro: {X_filtro.shape}")
-
-# Evaluar impacto en rendimiento
-pipeline_filtro = Pipeline([
-    ('scaler', StandardScaler()),
-    ('selector', SelectKBest(f_classif, k=25)),
-    ('classifier', SVC())
-])
-score_filtro = cross_val_score(pipeline_filtro, X, y, cv=5).mean()
-print(f"Puntuación con filtro: {score_filtro:.4f}")
+# 1. MÉTODO DE FILTRO: Selección estadística (ANOVA F-value)
+X_filtro = SelectKBest(f_classif, k=25).fit_transform(X, y)
+print(f"Después de filtro: {X_filtro.shape}")  # (1797, 25)
 
 # 2. MÉTODO WRAPPER: Eliminación recursiva (RFE)
-estimator = RandomForestClassifier(n_estimators=100)
-selector_wrapper = RFE(estimator, n_features_to_select=25, step=1)
-X_wrapper = selector_wrapper.fit_transform(X, y)
-print(f"Después de wrapper: {X_wrapper.shape}")
+estimator = RandomForestClassifier(n_estimators=100, random_state=42)
+X_wrapper = RFE(estimator, n_features_to_select=25).fit_transform(X, y)
+print(f"Después de wrapper: {X_wrapper.shape}")  # (1797, 25)
 
 # 3. MÉTODO EMBEBIDO: LASSO (L1 regularization)
-lasso = Lasso(alpha=0.01)
 X_scaled = StandardScaler().fit_transform(X)
-lasso.fit(X_scaled, y)
+lasso = Lasso(alpha=0.01).fit(X_scaled, y)
 
-# Visualizar importancia de características
+# Ver top características según importancia
 importancia = np.abs(lasso.coef_)
-indices = np.argsort(importancia)[::-1]
-print("Top 10 características (LASSO):")
-for i in range(10):
-    print(f"Característica {indices[i]}: {importancia[indices[i]]:.4f}")
+indices = np.argsort(importancia)[::-1][:5]
+for i in indices:
+    print(f"Característica {i}: {importancia[i]:.4f}")
 ```
 
-#### **Comparando resultados con y sin selección:**
-
-La aplicación de técnicas de selección de características debe evaluarse con validación cruzada. Ejemplo comparativo:
-
-```python
-from sklearn.model_selection import GridSearchCV
-
-# Pipeline sin selección de características
-pipeline_completo = Pipeline([
-    ('scaler', StandardScaler()),
-    ('classifier', SVC())
-])
-
-# Pipeline con selección
-pipeline_seleccion = Pipeline([
-    ('scaler', StandardScaler()),
-    ('selector', SelectKBest(f_classif)),
-    ('classifier', SVC())
-])
-
-# Buscar mejor número de características
-param_grid = {
-    'selector__k': [10, 20, 30, 40, 50, 64]  # 64 = todas las características
-}
-
-grid = GridSearchCV(pipeline_seleccion, param_grid, cv=5, scoring='accuracy')
-grid.fit(X, y)
-
-print(f"Mejor k: {grid.best_params_['selector__k']}")
-print(f"Mejor puntuación: {grid.best_score_:.4f}")
-print(f"Puntuación sin selección: {cross_val_score(pipeline_completo, X, y, cv=5).mean():.4f}")
-```
-
-> **Consejo práctico:** Inicia siempre con análisis de correlación y visualizaciones para entender las relaciones entre características antes de aplicar métodos automatizados.
+> **💡 Consejo:** Antes de usar métodos automatizados, analiza la correlación entre variables para entender mejor sus relaciones.
 
 ---
 
 ### **3.4. Aplicar reducción de dimensionalidad cuando sea beneficioso**
 
-**Problema:** Datasets con muchas dimensiones sufren de la "maldición de la dimensionalidad", donde la distancia entre puntos se vuelve menos significativa y el rendimiento se deteriora.
+**Problema:** Datasets con muchas dimensiones sufren de la "maldición de la dimensionalidad", donde la distancia entre puntos pierde significado y el rendimiento se deteriora.
 
-**Solución:** Aplicar técnicas de reducción de dimensionalidad para transformar el espacio de características manteniendo la información más relevante.
+**Solución:** Aplicar técnicas de reducción de dimensionalidad para transformar el espacio de características preservando la información relevante.
 
 #### **Diferencia con selección de características:**
 
-La **selección de características** conserva un subconjunto de las variables originales, mientras que la **reducción de dimensionalidad** crea nuevas variables que son combinaciones de las originales.
+La **selección de características** conserva un subconjunto de variables originales, mientras que la **reducción de dimensionalidad** crea nuevas variables que son combinaciones de las originales.
 
-#### **Principales técnicas y sus aplicaciones:**
+#### **Técnicas principales y aplicaciones:**
 
 | Técnica | Tipo | Mejor para | Consideraciones |
 |---------|------|------------|-----------------|
-| **PCA** (Análisis de Componentes Principales) | Lineal | • Datos con correlaciones lineales<br>• Visualización<br>• Eliminación de ruido | • Sensible a escala<br>• No preserva distancias entre clases |
-| **t-SNE** | No lineal | • Visualización<br>• Detección de clusters<br>• Datos complejos | • Computacionalmente intensivo<br>• No adecuado para proyección de nuevos datos |
-| **UMAP** | No lineal | • Alternativa más rápida a t-SNE<br>• Conservación de estructura local y global | • Más reciente, menos establecido |
-| **Autoencoder** | No lineal | • Datos muy complejos (imágenes, audio)<br>• Capturar relaciones no lineales | • Requiere más datos<br>• Más difícil de implementar y ajustar |
+| **PCA** | Lineal | ✅ Correlaciones lineales<br>✅ Visualización | ⚠️ Sensible a escala<br>⚠️ No preserva distancias entre clases |
+| **t-SNE** | No lineal | ✅ Visualización<br>✅ Detección de clusters | ⚠️ Computacionalmente intensivo<br>⚠️ No proyecta nuevos datos |
+| **UMAP** | No lineal | ✅ Alternativa más rápida a t-SNE | ⚠️ Más reciente, menos establecido |
+| **Autoencoder** | No lineal | ✅ Datos complejos (imágenes) | ⚠️ Requiere más datos y ajuste |
 
-#### **Implementación de PCA en Python:**
+#### **Implementación simplificada de PCA:**
 
 ```python
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_wine
 
-# Cargar y preparar datos de ejemplo
+# Cargar datos y escalar (crucial para PCA)
 wine = load_wine()
-X = wine.data
-y = wine.target
-features = wine.feature_names
+X = StandardScaler().fit_transform(wine.data)
 
-# Escalar datos (crucial para PCA)
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+# Aplicar PCA y analizar varianza explicada
+pca = PCA().fit(X)
+var_ratio = pca.explained_variance_ratio_
+cum_var = np.cumsum(var_ratio)
 
-# Aplicar PCA
-pca = PCA()
-X_pca = pca.fit_transform(X_scaled)
+# Encontrar componentes óptimos (95% varianza)
+n_comp = np.argmax(cum_var >= 0.95) + 1
+print(f"Componentes necesarios: {n_comp}")  # Típicamente mucho menor que las dimensiones originales
 
-# Analizar varianza explicada
-varianza_explicada = pca.explained_variance_ratio_
-varianza_acumulada = np.cumsum(varianza_explicada)
+# Aplicar PCA con componentes óptimos
+X_reducido = PCA(n_components=n_comp).fit_transform(X)
+print(f"Reducción: {X.shape[1]} → {X_reducido.shape[1]} dimensiones")
 
-# Visualizar resultados
-plt.figure(figsize=(10, 6))
-plt.bar(range(1, len(varianza_explicada) + 1), varianza_explicada, alpha=0.5, label='Varianza individual')
-plt.step(range(1, len(varianza_acumulada) + 1), varianza_acumulada, where='mid', label='Varianza acumulada')
-plt.axhline(y=0.95, color='r', linestyle='--', label='Umbral 95%')
-plt.xlabel('Número de componentes')
-plt.ylabel('Ratio de varianza explicada')
-plt.legend()
-plt.title('Análisis de componentes principales (PCA)')
-
-# Encontrar número óptimo de componentes (95% de varianza)
-n_components = np.argmax(varianza_acumulada >= 0.95) + 1
-print(f"Número de componentes para explicar 95% de varianza: {n_components}")
-
-# Aplicar PCA con número óptimo de componentes
-pca_optimo = PCA(n_components=n_components)
-X_reducido = pca_optimo.fit_transform(X_scaled)
-print(f"Dimensiones reducidas: {X_reducido.shape}")
-
-# Visualizar primeros dos componentes
-plt.figure(figsize=(10, 8))
-scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.8, s=50)
-plt.colorbar(scatter, label='Clase de vino')
-plt.xlabel('Componente Principal 1')
-plt.ylabel('Componente Principal 2')
-plt.title('Visualización de PCA: primeros dos componentes')
-
-# Analizar contribución de variables originales
-loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
-loading_df = pd.DataFrame(loadings[:, :2], columns=['PC1', 'PC2'], index=features)
-print("\nContribución de variables originales a PC1 y PC2:")
-print(loading_df.sort_values(by='PC1', ascending=False))
+# Visualizar 2 primeros componentes
+plt.figure(figsize=(8, 6))
+plt.scatter(X_reducido[:, 0], X_reducido[:, 1], c=wine.target, alpha=0.8, cmap='viridis')
+plt.xlabel('Componente 1')
+plt.ylabel('Componente 2')
+plt.colorbar(label='Tipo de vino')
 ```
 
-#### **Comparando rendimiento antes y después:**
-
-```python
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
-
-# Pipeline sin reducción
-pipeline_completo = Pipeline([
-    ('scaler', StandardScaler()),
-    ('svm', SVC())
-])
-
-# Pipeline con PCA
-pipeline_pca = Pipeline([
-    ('scaler', StandardScaler()),
-    ('pca', PCA(n_components=n_components)),
-    ('svm', SVC())
-])
-
-# Comparar rendimiento
-score_completo = cross_val_score(pipeline_completo, X, y, cv=5).mean()
-score_pca = cross_val_score(pipeline_pca, X, y, cv=5).mean()
-
-print(f"Puntuación sin PCA: {score_completo:.4f}")
-print(f"Puntuación con PCA ({n_components} componentes): {score_pca:.4f}")
-print(f"Mejora: {(score_pca - score_completo) * 100:.2f}%")
-```
-
-> **Consejo práctico:** Para datos de alta dimensionalidad, prueba diferentes técnicas de reducción (PCA, t-SNE, UMAP) y compara los resultados visuales para entender la estructura de tus datos antes de decidir qué técnica usar.
+> **💡 Consejo:** Antes de aplicar reducción de dimensionalidad, estandariza tus datos. La mayoría de técnicas (especialmente PCA) son sensibles a la escala.
 
 ---
 
 ### **3.5. Escalar características adecuadamente según el algoritmo**
 
-**Problema:** Muchos algoritmos de ML son sensibles a la escala de las variables, lo que puede introducir sesgos o ralentizar la convergencia cuando las características tienen magnitudes muy diferentes.
+**Problema:** Muchos algoritmos son sensibles a la escala de las variables, introduciendo sesgos cuando las características tienen magnitudes diferentes.
 
-**Solución:** Aplicar técnicas de transformación de escala apropiadas según el algoritmo y la distribución de los datos.
+**Solución:** Aplicar técnicas de escalado apropiadas según el algoritmo y los datos.
 
-#### **¿Por qué escalar es importante?**
+#### **¿Por qué es importante?**
 
-Imagina dos características: "ingresos_anuales" (rango: 20,000-200,000) y "edad" (rango: 18-90). Sin escalar, el algoritmo dará mucho más peso a "ingresos_anuales" simplemente porque sus valores son más grandes.
+Sin escalar, variables con valores grandes (ej: "ingresos_anuales": 20,000-200,000) dominarán sobre variables con valores pequeños (ej: "edad": 18-90).
 
-#### **Técnicas de escalado y normalización:**
+#### **Guía de técnicas de escalado:**
 
-| Técnica | Transformación | Mejor para | Uso recomendado |
-|---------|----------------|------------|-----------------|
-| **StandardScaler** | μ=0, σ=1 | Datos con distribución aproximadamente normal | • Regresión lineal<br>• SVM<br>• PCA<br>• Clustering |
-| **MinMaxScaler** | [0,1] o [-1,1] | Datos con distribución desconocida o no normal | • KNN<br>• Redes neuronales<br>• Algoritmos con regularización L1/L2 |
-| **RobustScaler** | Basado en cuartiles | Datos con valores atípicos (outliers) | • Regresión robusta<br>• Cuando hay outliers significativos |
-| **Normalizer** | Norma L1/L2 = 1 | Vectores (no escalares) | • Vectores de texto<br>• Cuando solo importa la dirección |
-| **QuantileTransformer** | Distribución normal o uniforme | Cualquier distribución | • Distribuciones muy sesgadas<br>• Datos no lineales |
+| Técnica | Transformación | Mejor para | Algoritmos adecuados |
+|---------|----------------|------------|---------------------|
+| **StandardScaler** | μ=0, σ=1 | Distribución normal | ✅ Regresión, SVM, PCA |
+| **MinMaxScaler** | [0,1] | Distribución desconocida | ✅ Redes neuronales, KNN |
+| **RobustScaler** | Basado en cuartiles | Datos con outliers | ✅ Regresión robusta |
+| **Normalizer** | Norma L1/L2 = 1 | Vectores (no escalares) | ✅ Vectores de texto |
 
-#### **Implementación y comparación de métodos:**
+#### **Implementación práctica:**
 
 ```python
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, QuantileTransformer
-from sklearn.datasets import load_boston
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 
-# Cargar dataset y seleccionar dos características con escalas diferentes
-boston = load_boston()
-X = boston.data
-features = boston.feature_names
-df = pd.DataFrame(X, columns=features)
+# EJEMPLO: PREPARACIÓN CORRECTA
+# ----------------------------
+# 1. Dividir datos ANTES de escalar
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-# Seleccionar dos características con escalas distintas (ejemplo: RM y LSTAT)
-X_ejemplo = df[['RM', 'LSTAT']].values
-feature_names = ['RM (habitaciones)', 'LSTAT (% estatus bajo)']
+# 2. Configurar pipeline con escalado integrado
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),  # Escala automáticamente train/test correctamente
+    ('modelo', SVC())
+])
 
-# Técnicas de escalado
-scalers = {
-    'Datos originales': None,
-    'StandardScaler': StandardScaler(),
-    'MinMaxScaler': MinMaxScaler(),
-    'RobustScaler': RobustScaler(),
-    'QuantileTransformer (normal)': QuantileTransformer(output_distribution='normal')
-}
+# 3. Entrenar pipeline (el escalador se ajusta solo a datos de entrenamiento)
+pipeline.fit(X_train, y_train)
 
-# Visualizar efectos
-plt.figure(figsize=(15, 12))
-i = 1
-
-for name, scaler in scalers.items():
-    plt.subplot(3, 2, i)
-    
-    if scaler:
-        X_scaled = scaler.fit_transform(X_ejemplo)
-    else:
-        X_scaled = X_ejemplo.copy()
-    
-    # Scatter plot
-    plt.scatter(X_scaled[:, 0], X_scaled[:, 1], alpha=0.5)
-    
-    plt.xlabel(feature_names[0])
-    plt.ylabel(feature_names[1])
-    plt.title(f'{name}')
-    
-    # Añadir estadísticas
-    if i > 1:  # No para datos originales
-        for j, feature in enumerate(feature_names):
-            plt.annotate(f'Media: {X_scaled[:, j].mean():.2f}, Std: {X_scaled[:, j].std():.2f}',
-                        xy=(0.05, 0.95 - j*0.05), xycoords='axes fraction')
-    
-    plt.grid(True, alpha=0.3)
-    i += 1
-
-plt.tight_layout()
-plt.show()
+# 4. Predecir (aplica la misma transformación a datos de test)
+y_pred = pipeline.predict(X_test)
 ```
 
-#### **Algoritmos y su necesidad de escalado:**
+#### **Qué algoritmos necesitan escalado:**
 
 | Algoritmo | ¿Necesita escalado? | ¿Por qué? |
 |-----------|---------------------|-----------|
-| **Regresión Lineal/Logística** | **Sí** | • Coeficientes comparables<br>• Convergencia más rápida con SGD |
-| **SVM** | **Sí** | • Se basa en distancias<br>• Muy sensible a escalas |
-| **K-Means** | **Sí** | • Usa distancias euclidianas |
-| **KNN** | **Sí** | • Basado completamente en distancias |
-| **Árboles (Decision Tree, Random Forest)** | **No** | • Usan reglas de partición, no distancias |
-| **Naïve Bayes** | **No** | • Basado en probabilidades |
-| **Redes Neuronales** | **Sí** | • Convergencia más rápida<br>• Evita saturación de neuronas |
-
-#### **Consideraciones importantes:**
-
-- **Aplicar el escalado después de la división train/test** para evitar data leakage
-- **Guardar los parámetros del scaler** para aplicar la misma transformación a datos nuevos
-- **Escalar según el algoritmo**, no según el dataset
-- **Combinar con imputación** para manejar valores faltantes antes de escalar
-
-```python
-# Implementación correcta con Pipeline
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVR
-from sklearn.metrics import mean_squared_error
-
-# Dividir datos
-X_train, X_test, y_train, y_test = train_test_split(X, boston.target, test_size=0.2, random_state=42)
-
-# Pipeline con escalado DENTRO del proceso
-pipeline = Pipeline([
-    ('scaler', StandardScaler()),  # El scaler se entrena SOLO con datos de entrenamiento
-    ('svr', SVR())
-])
-
-# Entrenamiento
-pipeline.fit(X_train, y_train)
-
-# Predicción (el escalado se aplica automáticamente)
-y_pred = pipeline.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print(f"Error cuadrático medio: {mse:.4f}")
-```
+| **Regresión/SVM** | ✅ Sí | Basado en distancias |
+| **K-Means/KNN** | ✅ Sí | Usa distancias euclidianas |
+| **Árboles (Decision Tree, Random Forest)** | ❌ No | Usan reglas de partición |
+| **Redes Neuronales** | ✅ Sí | Convergencia más rápida |
 
 > **Pregunta para reflexionar:** ¿Qué ocurriría si aplicaras MinMaxScaler a un conjunto de datos con outliers extremos? ¿Cómo afectaría esto a tu modelo?
 
@@ -779,117 +602,43 @@ print(f"Error cuadrático medio: {mse:.4f}")
 
 ### **3.6. Realizar ingeniería de características con conocimiento del dominio**
 
-**Problema:** Los modelos genéricos no capturan completamente las relaciones específicas del dominio, limitando su capacidad predictiva.
+**Problema:** Los modelos genéricos no capturan completamente las relaciones específicas del dominio.
 
-**Solución:** Aprovechar el conocimiento del negocio y del dominio para diseñar características que incorporen la experiencia humana y la intuición del sector.
+**Solución:** Incorporar conocimiento experto del negocio para crear características que codifiquen la experiencia humana.
 
-#### **Beneficios de la ingeniería de características basada en dominio:**
+#### **Beneficios de la ingeniería basada en dominio:**
 
 | Beneficio | Descripción |
 |-----------|-------------|
-| **Mayor poder predictivo** | Las características específicas del dominio suelen tener mayor correlación con la variable objetivo |
-| **Modelos más interpretables** | Las características derivadas tienen significado para los expertos del dominio |
-| **Menor necesidad de datos** | El conocimiento humano puede compensar parcialmente la escasez de datos |
-| **Mejor generalización** | Capturan relaciones causales en lugar de correlaciones espurias |
+| **Mayor poder predictivo** | Las características específicas suelen tener mayor correlación con el objetivo |
+| **Modelos interpretables** | Las características tienen significado para expertos del dominio |
+| **Menor necesidad de datos** | El conocimiento humano puede compensar la escasez de datos |
+| **Mejor generalización** | Capturan relaciones causales, no solo correlaciones |
 
-#### **Ejemplos por industria:**
+#### **Ejemplos por sector:**
 
-**1. Finanzas e inversión:**
 ```python
-import pandas as pd
-import numpy as np
-
-# Asumiendo un DataFrame con datos de precios de acciones
-df = pd.DataFrame({
-    'fecha': pd.date_range(start='2020-01-01', periods=100, freq='D'),
-    'precio_apertura': np.random.normal(100, 5, 100),
-    'precio_cierre': np.random.normal(101, 5, 100),
-    'precio_maximo': np.random.normal(103, 3, 100),
-    'precio_minimo': np.random.normal(98, 3, 100),
-    'volumen': np.random.normal(1000000, 200000, 100)
-})
-
-# Características inspiradas en análisis técnico
+# 1. FINANZAS - Análisis técnico de acciones
 df['rango_diario'] = df['precio_maximo'] - df['precio_minimo']
 df['retorno_diario'] = (df['precio_cierre'] - df['precio_apertura']) / df['precio_apertura']
-df['volumen_relativo'] = df['volumen'] / df['volumen'].rolling(window=10).mean()
-
-# Indicadores técnicos comunes
 df['media_movil_10d'] = df['precio_cierre'].rolling(window=10).mean()
-df['RSI_14'] = calcular_rsi(df['precio_cierre'], 14)  # Función personalizada para RSI
 
-# Patrones de velas japonesas (simplificado)
-df['doji'] = np.abs(df['precio_cierre'] - df['precio_apertura']) < 0.1 * df['rango_diario']
-```
+# 2. E-COMMERCE - Análisis de clientes
+df['periodo_dia'] = pd.cut(df['hora_dia'], 
+                           bins=[0, 6, 12, 18, 24],
+                           labels=['madrugada', 'mañana', 'tarde', 'noche'])
 
-**2. Marketing y análisis de clientes:**
-```python
-# Extracción de componentes temporales
-df['hora_dia'] = df['timestamp'].dt.hour
-df['dia_semana'] = df['timestamp'].dt.day_name()
-df['fin_semana'] = df['timestamp'].dt.dayofweek >= 5
-df['mes'] = df['timestamp'].dt.month
-df['trimestre'] = df['timestamp'].dt.quarter
+clientes['dias_desde_ultima_compra'] = (hoy - clientes['fecha_ultima_compra']).dt.days
+clientes['frecuencia_mensual'] = clientes['total_compras'] / clientes['meses_activo']
 
-# Categorización por tiempo (conocimiento de dominio)
-df['periodo_dia'] = pd.cut(
-    df['hora_dia'],
-    bins=[0, 6, 12, 18, 24],
-    labels=['madrugada', 'mañana', 'tarde', 'noche']
-)
-
-# Agregaciones temporales (comportamiento histórico)
-clientes = df.groupby('cliente_id').agg({
-    'compra': [
-        ('total_compras', 'count'),
-        ('compras_ultimo_mes', lambda x: x.iloc[-30:].sum() if len(x) >= 30 else x.sum()),
-        ('dias_desde_ultima_compra', lambda x: (pd.Timestamp.now() - x.index[-1]).days)
-    ],
-    'monto': [
-        ('monto_promedio', 'mean'),
-        ('monto_total', 'sum'),
-        ('monto_max', 'max')
-    ]
-})
-```
-
-**3. Medicina y salud:**
-```python
-# Características médicas derivadas
+# 3. MEDICINA - Métricas clínicas
 pacientes['imc'] = pacientes['peso'] / (pacientes['altura'] ** 2)
-pacientes['relacion_cintura_cadera'] = pacientes['medida_cintura'] / pacientes['medida_cadera']
-
-# Categorización según directrices médicas (conocimiento del dominio)
-pacientes['categoria_imc'] = pd.cut(
-    pacientes['imc'],
-    bins=[0, 18.5, 25, 30, 100],
-    labels=['bajo_peso', 'normal', 'sobrepeso', 'obesidad']
-)
-
-# Combinar factores de riesgo (conocimiento médico)
-factores_riesgo = ['hipertension', 'diabetes', 'tabaquismo', 'colesterol_alto']
-pacientes['num_factores_riesgo'] = pacientes[factores_riesgo].sum(axis=1)
-pacientes['alto_riesgo_cv'] = (pacientes['edad'] > 50) & (pacientes['num_factores_riesgo'] >= 2)
+pacientes['categoria_imc'] = pd.cut(pacientes['imc'],
+                                    bins=[0, 18.5, 25, 30, 100],
+                                    labels=['bajo_peso', 'normal', 'sobrepeso', 'obesidad'])
 ```
 
-#### **Enfoques generales aplicables a múltiples dominios:**
-
-1. **Extraer componentes temporales significativos:**
-   - Hora del día, día de la semana, mes, temporada
-   - Proximidad a eventos especiales o feriados
-   - Categorizar en periodos lógicos (mañana/tarde/noche)
-
-2. **Crear agregaciones con ventanas temporales:**
-   - Medias móviles (7 días, 30 días, 90 días)
-   - Valores mínimos/máximos en periodos relevantes
-   - Tasas de cambio entre periodos
-
-3. **Distancias y relaciones espaciales:**
-   - Distancia a puntos de interés
-   - Densidad de población o características en un radio
-   - Relaciones topológicas (dentro, adyacente, etc.)
-
-> **Ejercicio de aplicación:** Piensa en un proyecto de ML y enumera 5 características específicas del dominio que un experto del sector consideraría importantes pero que un algoritmo automático probablemente no detectaría.
+> **💡 Consejo:** Consulta siempre con expertos del dominio para identificar indicadores clave que no sean evidentes en los datos puros.
 
 ---
 
@@ -1095,7 +844,7 @@ Un sistema más avanzado incluiría:
 
 #### **Flujo de trabajo para procesamiento de texto:**
 
-![Flujo de trabajo NLP](https://i.imgur.com/placeholder_nlp_workflow.png)
+<!-- Referencia a imagen eliminada: Flujo de trabajo NLP -->
 
 #### **1. Preprocesamiento de texto**
 
@@ -1372,7 +1121,7 @@ for i in range(len(frases)):
 
 El proceso de entrenamiento, evaluación y selección de modelos es donde finalmente convertimos los datos preparados en un sistema predictivo. Aunque es tentador enfocarse inmediatamente en la precisión, es crucial adoptar un enfoque sistemático que equilibre múltiples factores: rendimiento, interpretabilidad, velocidad y mantenibilidad.
 
-![Ciclo de entrenamiento y evaluación](https://i.imgur.com/placeholder_model_selection.png)
+<!-- Referencia a imagen eliminada: Ciclo de entrenamiento y evaluación -->
 
 ### **4.1. Seleccionar algoritmos iniciales estratégicamente**
 
@@ -1395,310 +1144,175 @@ El proceso de entrenamiento, evaluación y selección de modelos es donde finalm
 
 #### **Algoritmos recomendados por escenario:**
 
-![Mapa de selección de algoritmos](https://i.imgur.com/placeholder_algorithm_map.png)
-
 ```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, f1_score, mean_squared_error, r2_score
-
-# Función para recomendar algoritmos basados en características del problema
 def recomendar_algoritmos(tipo_problema, num_muestras, num_caracteristicas, 
-                          interpretabilidad_requerida=False, datos_lineales=None,
-                          tiempo_real=False, desbalanceado=False):
-    """
-    Recomienda algoritmos iniciales para explorar basados en las características del problema.
-    
-    Parámetros:
-    -----------
-    tipo_problema : str
-        'clasificacion' o 'regresion'
-    num_muestras : int
-        Número de ejemplos de entrenamiento
-    num_caracteristicas : int
-        Número de características/dimensiones
-    interpretabilidad_requerida : bool
-        Si se requiere que el modelo sea interpretable
-    datos_lineales : bool o None
-        Si los datos presentan relaciones lineales (None si se desconoce)
-    tiempo_real : bool
-        Si el modelo necesita hacer predicciones en tiempo real
-    desbalanceado : bool
-        Si las clases están muy desbalanceadas (solo para clasificación)
-    
-    Retorna:
-    --------
-    dict
-        Algoritmos recomendados con prioridad y razones
-    """
-    recomendaciones = {}
-    
-    if tipo_problema == 'clasificacion':
-        # Pocos datos (< 10k ejemplos)
-        if num_muestras < 10000:
-            recomendaciones['Naive Bayes'] = {
-                'prioridad': 'Alta',
-                'razones': ['Funciona bien con pocos datos', 'Rápido de entrenar'],
-                'import': 'from sklearn.naive_bayes import GaussianNB, MultinomialNB'
-            }
-            
-            recomendaciones['SVM'] = {
-                'prioridad': 'Alta',
-                'razones': ['Efectivo en espacios de alta dimensión', 'Buena generalización'],
-                'import': 'from sklearn.svm import SVC'
-            }
-            
-            if interpretabilidad_requerida:
-                recomendaciones['Árbol de decisión'] = {
-                    'prioridad': 'Alta',
-                    'razones': ['Altamente interpretable', 'Puede visualizarse'],
-                    'import': 'from sklearn.tree import DecisionTreeClassifier'
-                }
-        
-        # Datos medianos a grandes (≥ 10k ejemplos)
-        else:
-            recomendaciones['Random Forest'] = {
-                'prioridad': 'Alta',
-                'razones': ['Robusto contra overfitting', 'Maneja bien muchas características'],
-                'import': 'from sklearn.ensemble import RandomForestClassifier'
-            }
-            
-            recomendaciones['Gradient Boosting'] = {
-                'prioridad': 'Alta',
-                'razones': ['Alto rendimiento', 'Maneja características mixtas'],
-                'import': 'from sklearn.ensemble import GradientBoostingClassifier, from xgboost import XGBClassifier'
-            }
-            
-            if not interpretabilidad_requerida and num_muestras > 50000:
-                recomendaciones['Redes Neuronales'] = {
-                    'prioridad': 'Media',
-                    'razones': ['Captura relaciones complejas', 'Requiere muchos datos'],
-                    'import': 'from sklearn.neural_network import MLPClassifier'
-                }
-        
-        # Si hay restricciones de tiempo o se requiere aprendizaje online
-        if tiempo_real:
-            recomendaciones['SGD Classifier'] = {
-                'prioridad': 'Alta' if tiempo_real else 'Media',
-                'razones': ['Rápido', 'Soporta aprendizaje incremental'],
-                'import': 'from sklearn.linear_model import SGDClassifier'
-            }
-            
-        # Para datos desbalanceados
-        if desbalanceado:
-            recomendaciones['Balanced Random Forest'] = {
-                'prioridad': 'Alta',
-                'razones': ['Maneja clases desbalanceadas', 'Reduce overfitting'],
-                'import': 'from imblearn.ensemble import BalancedRandomForestClassifier'
-            }
-    
-    elif tipo_problema == 'regresion':
-        # Si hay evidencia de relaciones lineales o es desconocido
-        if datos_lineales or datos_lineales is None:
-            recomendaciones['Regresión Lineal/Ridge'] = {
-                'prioridad': 'Alta',
-                'razones': ['Simple', 'Rápido', 'Interpretable'],
-                'import': 'from sklearn.linear_model import LinearRegression, Ridge'
-            }
-        
-        # Para cualquier tamaño de dataset
-        recomendaciones['Random Forest Regressor'] = {
-            'prioridad': 'Alta',
-            'razones': ['Robusto', 'Maneja no-linealidad', 'Pocos hiperparámetros críticos'],
-            'import': 'from sklearn.ensemble import RandomForestRegressor'
-        }
-        
-        # Para datasets más grandes
-        if num_muestras >= 10000:
-            recomendaciones['Gradient Boosting Regressor'] = {
-                'prioridad': 'Alta',
-                'razones': ['Alto rendimiento', 'Buena generalización'],
-                'import': 'from sklearn.ensemble import GradientBoostingRegressor, from xgboost import XGBRegressor'
-            }
-        
-        # Alta dimensionalidad y posible no linealidad
-        if num_caracteristicas > 50 and (datos_lineales is False or datos_lineales is None):
-            recomendaciones['SVM Regressor'] = {
-                'prioridad': 'Media',
-                'razones': ['Maneja espacios de alta dimensión', 'Captura relaciones no lineales con kernels'],
-                'import': 'from sklearn.svm import SVR'
-            }
-    
-    return recomendaciones
-
-# Ejemplo de uso
-tipo_problema = 'clasificacion'
-num_muestras = 5000
-num_caracteristicas = 20
-interpretabilidad = True
-
-recomendaciones = recomendar_algoritmos(
-    tipo_problema=tipo_problema,
-    num_muestras=num_muestras,
-    num_caracteristicas=num_caracteristicas,
-    interpretabilidad_requerida=interpretabilidad,
-    datos_lineales=None,  # Desconocido
-    tiempo_real=False,
-    desbalanceado=True
-)
-
-print(f"Recomendaciones para {tipo_problema} con {num_muestras} muestras y {num_caracteristicas} características:")
-for algoritmo, info in recomendaciones.items():
-    print(f"\n{algoritmo} (Prioridad: {info['prioridad']})")
-    print("Razones:")
-    for razon in info['razones']:
-        print(f"  - {razon}")
-    print(f"Import: {info['import']}")
+             interpretabilidad_requerida=False, datos_lineales=None,
+             tiempo_real=False, desbalanceado=False):
+  """
+  Recomienda algoritmos de ML basados en características del problema
+  
+  Parámetros:
+  -----------
+  tipo_problema : str
+    'clasificacion' o 'regresion'
+  num_muestras : int
+    Número de muestras en el dataset
+  num_caracteristicas : int
+    Número de características/variables
+  interpretabilidad_requerida : bool
+    Si se requiere que el modelo sea interpretable
+  datos_lineales : bool o None
+    Si los datos tienen relación lineal (None si es desconocido)
+  tiempo_real : bool
+    Si se requieren predicciones en tiempo real
+  desbalanceado : bool
+    Si el dataset tiene clases desbalanceadas (solo para clasificación)
+  
+  Retorna:
+  --------
+  dict
+    Diccionario con algoritmos recomendados y justificaciones
+  """
+  recomendaciones = {}
+  
+  # Clasificación o regresión
+  if tipo_problema not in ['clasificacion', 'regresion']:
+    return {"error": "El tipo de problema debe ser 'clasificacion' o 'regresion'"}
+  
+  # Datasets pequeños (menos de 1,000 muestras)
+  dataset_pequeno = num_muestras < 1000
+  # Datasets grandes (más de 100,000 muestras)
+  dataset_grande = num_muestras > 100000
+  # Alta dimensionalidad (más de 50 características)
+  alta_dimensionalidad = num_caracteristicas > 50
+  
+  # MODELOS LINEALES
+  if tipo_problema == 'clasificacion':
+    if datos_lineales == True or datos_lineales is None:
+      recomendaciones["Regresión Logística"] = {
+        "confianza": 0.8 if datos_lineales == True else 0.6,
+        "justificacion": "Buena opción para clasificación con relaciones lineales."
+      }
+      if tiempo_real:
+        recomendaciones["Regresión Logística"]["confianza"] += 0.1
+        recomendaciones["Regresión Logística"]["justificacion"] += " Eficiente en predicción."
+      if interpretabilidad_requerida:
+        recomendaciones["Regresión Logística"]["confianza"] += 0.1
+        recomendaciones["Regresión Logística"]["justificacion"] += " Altamente interpretable."
+  else:  # regresión
+    if datos_lineales == True or datos_lineales is None:
+      recomendaciones["Regresión Lineal/Ridge"] = {
+        "confianza": 0.8 if datos_lineales == True else 0.6,
+        "justificacion": "Excelente para regresión con relaciones lineales."
+      }
+      if interpretabilidad_requerida:
+        recomendaciones["Regresión Lineal/Ridge"]["confianza"] += 0.1
+        recomendaciones["Regresión Lineal/Ridge"]["justificacion"] += " Altamente interpretable."
+  
+  # NAIVE BAYES (solo para clasificación)
+  if tipo_problema == 'clasificacion':
+    if alta_dimensionalidad or dataset_pequeno:
+      recomendaciones["Naive Bayes"] = {
+        "confianza": 0.7,
+        "justificacion": "Funciona bien con alta dimensionalidad y pocos datos."
+      }
+      if tiempo_real:
+        recomendaciones["Naive Bayes"]["confianza"] += 0.1
+        recomendaciones["Naive Bayes"]["justificacion"] += " Muy rápido en predicción."
+  
+  # ÁRBOLES DE DECISIÓN
+  if interpretabilidad_requerida:
+    recomendaciones["Árboles de Decisión"] = {
+      "confianza": 0.7,
+      "justificacion": "Altamente interpretables y visualizables."
+    }
+    if desbalanceado and tipo_problema == 'clasificacion':
+      recomendaciones["Árboles de Decisión"]["confianza"] += 0.1
+      recomendaciones["Árboles de Decisión"]["justificacion"] += " Pueden manejar clases desbalanceadas."
+  
+  # RANDOM FOREST
+  recomendaciones["Random Forest"] = {
+    "confianza": 0.7,
+    "justificacion": "Robusto y con buen rendimiento en diversos escenarios."
+  }
+  if dataset_grande:
+    recomendaciones["Random Forest"]["confianza"] -= 0.1
+    recomendaciones["Random Forest"]["justificacion"] += " Aunque puede ser lento con datasets muy grandes."
+  if interpretabilidad_requerida:
+    recomendaciones["Random Forest"]["confianza"] -= 0.2
+    recomendaciones["Random Forest"]["justificacion"] += " Menos interpretable que árboles individuales."
+  
+  # GRADIENT BOOSTING
+  recomendaciones["Gradient Boosting"] = {
+    "confianza": 0.8,
+    "justificacion": "Suele ofrecer gran rendimiento predictivo."
+  }
+  if dataset_grande:
+    recomendaciones["Gradient Boosting"]["confianza"] -= 0.2
+    recomendaciones["Gradient Boosting"]["justificacion"] += " Puede ser lento de entrenar con datasets muy grandes."
+  if tiempo_real:
+    recomendaciones["Gradient Boosting"]["confianza"] -= 0.1
+    recomendaciones["Gradient Boosting"]["justificacion"] += " No es el más rápido para predicciones en tiempo real."
+  if interpretabilidad_requerida:
+    recomendaciones["Gradient Boosting"]["confianza"] -= 0.2
+    recomendaciones["Gradient Boosting"]["justificacion"] += " Limitada interpretabilidad."
+  
+  # SVM
+  if not dataset_grande:
+    recomendaciones["SVM"] = {
+      "confianza": 0.6,
+      "justificacion": "Bueno para datasets pequeños a medianos."
+    }
+    if alta_dimensionalidad:
+      recomendaciones["SVM"]["confianza"] += 0.1
+      recomendaciones["SVM"]["justificacion"] += " Funciona bien con alta dimensionalidad."
+    if interpretabilidad_requerida:
+      recomendaciones["SVM"]["confianza"] -= 0.2
+      recomendaciones["SVM"]["justificacion"] += " Baja interpretabilidad."
+  
+  # KNN
+  if dataset_pequeno and not alta_dimensionalidad:
+    recomendaciones["KNN"] = {
+      "confianza": 0.6,
+      "justificacion": "Simple y efectivo para datasets pequeños."
+    }
+    if tiempo_real:
+      recomendaciones["KNN"]["confianza"] -= 0.3
+      recomendaciones["KNN"]["justificacion"] += " Lento en predicción con muchos datos de entrenamiento."
+  
+  # REDES NEURONALES
+  if dataset_grande and not interpretabilidad_requerida:
+    recomendaciones["Redes Neuronales"] = {
+      "confianza": 0.7,
+      "justificacion": "Potente para datasets grandes y relaciones complejas."
+    }
+    if tiempo_real:
+      recomendaciones["Redes Neuronales"]["confianza"] -= 0.1
+      recomendaciones["Redes Neuronales"]["justificacion"] += " Puede ser lento dependiendo de la arquitectura."
+    if dataset_pequeno:
+      recomendaciones["Redes Neuronales"]["confianza"] = 0.3
+      recomendaciones["Redes Neuronales"]["justificacion"] = "No recomendado para datasets pequeños."
+  
+  # Ordenar recomendaciones por confianza
+  recomendaciones_ordenadas = {k: v for k, v in sorted(
+    recomendaciones.items(), 
+    key=lambda item: item[1]["confianza"], 
+    reverse=True
+  )}
+  
+  return recomendaciones_ordenadas
 ```
 
-#### **Comparación de características por algoritmo:**
-
-| Algoritmo | Interpretabilidad | Velocidad entrenamiento | Velocidad predicción | Memoria requerida | Manejo de outliers | Escalabilidad |
-|-----------|-------------------|-------------------------|----------------------|-------------------|---------------------|--------------|
-| **Regresión lineal/logística** | Alta | Alta | Alta | Baja | Baja | Alta |
-| **Naïve Bayes** | Media | Alta | Alta | Baja | Media | Alta |
-| **Árboles de decisión** | Alta | Media | Alta | Baja | Alta | Media |
-| **Random Forest** | Media | Media | Media | Media | Alta | Media |
-| **Gradient Boosting** | Baja | Baja | Media | Media | Alta | Baja |
-| **SVM** | Baja | Baja (grandes datasets) | Media | Media-Alta | Media | Baja |
-| **K-Nearest Neighbors** | Media | Alta | Baja | Alta | Baja | Baja |
-| **Redes neuronales** | Muy baja | Muy baja | Alta | Alta | Media | Media-Alta |
-
-#### **Implementación práctica de evaluación inicial:**
-
-```python
-def evaluar_algoritmos_iniciales(X, y, tipo_problema='clasificacion', cv=5, random_state=42):
-    """
-    Evalúa rápidamente varios algoritmos con configuraciones por defecto
-    
-    Parámetros:
-    -----------
-    X : array-like
-        Características
-    y : array-like
-        Variable objetivo
-    tipo_problema : str
-        'clasificacion' o 'regresion'
-    cv : int
-        Número de folds para validación cruzada
-    
-    Retorna:
-    --------
-    DataFrame
-        Resultados comparativos de los algoritmos
-    """
-    # Dividir datos
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=random_state)
-    
-    # Escalar características
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    
-    resultados = []
-    algoritmos = {}
-    
-    if tipo_problema == 'clasificacion':
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.naive_bayes import GaussianNB
-        from sklearn.tree import DecisionTreeClassifier
-        from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-        from sklearn.svm import SVC
-        from sklearn.neighbors import KNeighborsClassifier
-        
-        algoritmos = {
-            'Regresión Logística': LogisticRegression(max_iter=1000, random_state=random_state),
-            'Naive Bayes': GaussianNB(),
-            'Árbol de Decisión': DecisionTreeClassifier(random_state=random_state),
-            'Random Forest': RandomForestClassifier(n_estimators=100, random_state=random_state),
-            'Gradient Boosting': GradientBoostingClassifier(random_state=random_state),
-            'SVM': SVC(probability=True, random_state=random_state),
-            'KNN': KNeighborsClassifier(n_neighbors=5)
-        }
-        
-        # Métricas para clasificación
-        metrics = {
-            'Accuracy': (accuracy_score, {}),
-            'F1 Score': (f1_score, {'average': 'weighted'})
-        }
-    
-    else:  # regresión
-        from sklearn.linear_model import LinearRegression, Ridge
-        from sklearn.tree import DecisionTreeRegressor
-        from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-        from sklearn.svm import SVR
-        from sklearn.neighbors import KNeighborsRegressor
-        
-        algoritmos = {
-            'Regresión Lineal': LinearRegression(),
-            'Ridge': Ridge(random_state=random_state),
-            'Árbol de Decisión': DecisionTreeRegressor(random_state=random_state),
-            'Random Forest': RandomForestRegressor(n_estimators=100, random_state=random_state),
-            'Gradient Boosting': GradientBoostingRegressor(random_state=random_state),
-            'SVR': SVR(),
-            'KNN': KNeighborsRegressor(n_neighbors=5)
-        }
-        
-        # Métricas para regresión
-        metrics = {
-            'MSE': (mean_squared_error, {}),
-            'R²': (r2_score, {})
-        }
-    
-    # Evaluar cada algoritmo
-    for nombre, algoritmo in algoritmos.items():
-        try:
-            # Entrenar modelo
-            inicio = time.time()
-            algoritmo.fit(X_train_scaled, y_train)
-            tiempo_train = time.time() - inicio
-            
-            # Tiempo de predicción
-            inicio = time.time()
-            y_pred = algoritmo.predict(X_test_scaled)
-            tiempo_pred = time.time() - inicio
-            
-            # Calcular métricas
-            scores = {}
-            for nombre_metrica, (metrica, params) in metrics.items():
-                scores[nombre_metrica] = metrica(y_test, y_pred, **params)
-            
-            # Validación cruzada
-            cv_scores = cross_val_score(
-                algoritmo, X_train_scaled, y_train, cv=cv, 
-                scoring='accuracy' if tipo_problema == 'clasificacion' else 'neg_mean_squared_error'
-            )
-            
-            resultados.append({
-                'Algoritmo': nombre,
-                'CV Score': np.mean(cv_scores) if tipo_problema == 'clasificacion' else -np.mean(cv_scores),
-                'CV Std': np.std(cv_scores) if tipo_problema == 'clasificacion' else np.std(-cv_scores),
-                **scores,
-                'Tiempo Train (s)': tiempo_train,
-                'Tiempo Pred (s)': tiempo_pred
-            })
-            
-        except Exception as e:
-            print(f"Error con {nombre}: {str(e)}")
-            continue
-    
-    # Ordenar por rendimiento (primera métrica)
-    primera_metrica = list(metrics.keys())[0]
-    if tipo_problema == 'clasificacion':
-        resultados.sort(key=lambda x: x[primera_metrica], reverse=True)
-    else:
-        resultados.sort(key=lambda x: x[primera_metrica])
-    
-    return pd.DataFrame(resultados)
-
-# Ejemplo de uso (con datos hipotéticos)
-# resultados = evaluar_algoritmos_iniciales(X, y, tipo_problema='clasificacion')
-# print(resultados)
-```
+| Algoritmo | Descripción | Mejor para | Consideraciones |
+|-----------|-------------|------------|-----------------|
+| **Regresión Lineal/Ridge** | Modela relación lineal entre variables | • Relaciones lineales<br>• Datasets pequeños a medianos<br>• Cuando se requiere interpretabilidad | • Sensible a outliers<br>• Asume independencia de características |
+| **Naive Bayes** | Basado en el teorema de Bayes y probabilidades condicionales | • Clasificación de texto<br>• Datasets pequeños<br>• Alta dimensionalidad | • Asume independencia entre características<br>• Rápido y eficiente en memoria |
+| **Árboles de Decisión** | Crea reglas de decisión jerárquicas | • Datos categóricos y numéricos<br>• Cuando se requiere interpretabilidad<br>• Captura relaciones no lineales | • Tendencia al sobreajuste<br>• Inestable (pequeños cambios en datos) |
+| **Random Forest** | Conjunto de árboles de decisión | • Datasets medianos a grandes<br>• Problemas con muchas características<br>• Evitar sobreajuste | • Menos interpretable que árboles<br>• Mayor costo computacional |
+| **Gradient Boosting** | Construye modelos secuencialmente, cada uno mejorando al anterior | • Alto rendimiento predictivo<br>• Datasets bien estructurados<br>• Competiciones | • Requiere ajuste cuidadoso<br>• Más lento de entrenar<br>• Mayor riesgo de sobreajuste |
+| **SVM** | Busca hiperplanos óptimos de separación | • Alta dimensionalidad<br>• Cuando las clases son separables<br>• Datasets pequeños a medianos | • Sensible a parámetros<br>• Lento en grandes datasets<br>• Difícil interpretación |
+| **KNN** | Clasifica basado en la similitud con vecinos | • Datasets pequeños<br>• Relaciones locales<br>• Prototipos rápidos | • Lento en predicción<br>• Sensible a escala de características<br>• Requiere mucha memoria |
+| **Redes Neuronales** | Modelos inspirados en neuronas biológicas | • Grandes volúmenes de datos<br>• Relaciones muy complejas<br>• Problemas de percepción | • Requiere muchos datos<br>• Difícil interpretación<br>• Costoso computacionalmente |
 
 #### **Consejos para la selección inicial:**
 
@@ -1710,7 +1324,7 @@ def evaluar_algoritmos_iniciales(X, y, tipo_problema='clasificacion', cv=5, rand
 
 > **Ejercicio práctico:** Para un problema que te interese, selecciona tres algoritmos iniciales siguiendo la guía anterior. Implementa cada uno con configuraciones por defecto y compara sus resultados. ¿Los algoritmos seleccionados funcionaron como esperabas? ¿Hubo alguna sorpresa?
 
-### **4.2. Implementar estrategias efectivas contra el sobreajuste**
+### **4.2. Entender y prevenir el sobreajuste**
 
 **Problema:** Los modelos con alta capacidad tienden a memorizar los datos de entrenamiento (sobreajuste), lo que resulta en un pobre rendimiento en datos nuevos.
 
@@ -1723,7 +1337,7 @@ El sobreajuste ocurre cuando un modelo se ajusta demasiado a las peculiaridades 
 - Bajo rendimiento en datos de validación/prueba
 - Alta varianza en las predicciones
 
-![Ilustración de sobreajuste](https://i.imgur.com/placeholder_overfitting.png)
+<!-- Referencia a imagen eliminada: Ilustración de sobreajuste -->
 
 #### **Estrategias probadas para combatir el sobreajuste:**
 
@@ -2290,7 +1904,7 @@ La **meta** es encontrar el balance entre ambos (trade-off):
 - Modelos complejos ↓ sesgo ↑ varianza
 - Modelos simples ↑ sesgo ↓ varianza
 
-![Trade-off sesgo-varianza](https://i.imgur.com/placeholder_bias_variance.png)
+<!-- Referencia a imagen eliminada: Trade-off sesgo-varianza -->
 
 #### **Interpretación de curvas de aprendizaje:**
 
