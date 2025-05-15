@@ -466,29 +466,31 @@ Por eso, **no se debe reentrenar todo el pipeline desde cero cada vez**. En camb
 
 Y luego cargarlos cuando se necesiten para hacer predicciones.
 
-#### **Guardar con `pickle` (Scikit-learn)**
+#### **Guardar con `joblib` (Scikit-learn)**
 
 ```python
-import pickle
+from joblib import dump, load
 
 # Guardar el escalador
-pickle.dump(scaler, open("scaler.p", "wb"))
+dump(scaler, "scaler.joblib")
 
 # Guardar el modelo
-pickle.dump(regressor, open("regressor.p", "wb"))
+dump(regressor, "regressor.joblib")
 ```
 
 Luego, en producción:
 
 ```python
 # Cargar los objetos
-scaler = pickle.load(open("scaler.p", "rb"))
-regressor = pickle.load(open("regressor.p", "rb"))
+scaler = load("scaler.joblib")
+regressor = load("regressor.joblib")
 
 # Preprocesar y predecir
 X_scaled = scaler.transform(X_new)
 predicciones = regressor.predict(X_scaled)
 ```
+
+Joblib es más eficiente que pickle para objetos de NumPy y modelos de machine learning, especialmente con datasets grandes, y ofrece mejor compresión y rendimiento.
 
 ---
 
